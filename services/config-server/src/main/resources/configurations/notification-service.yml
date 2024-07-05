@@ -1,0 +1,39 @@
+spring:
+  data:
+    mongodb:
+      username: andd
+      password: mgAnDD1102
+      hosts: localhost
+      port: 27017
+      database: customer
+      authentication-database: admin
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: paymentGroup,orderGroup
+      auto-offset-reset: earliest
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.trusted.package: '*'
+        spring.json.type.mapping: orderConfirmation:com.andd.ecommerce.kafka.order.OrderConfirmation,paymentConfirmation:com.andd.ecommerce.kafka.payment.PaymentConfirmation
+  application:
+    name: notification-service
+  mail:
+    host: localhost
+    port: 1025
+    username: andd
+    password: andd
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+
+server:
+  port: 8040
