@@ -1,9 +1,10 @@
 spring:
   datasource:
+    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/order
     username: andd
-    password: pgAnDD#1102
-    driver-class-name: org.postgresql.Driver
+    password: pgAnDD1102
+    
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,10 +17,11 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.type.mapping: orderConfirmation:com.andd.ecommerce.kafka.OrderConfirmation
-server:
-  port: 8070
+
 application:
   config:
     customer-url: http://localhost:8222/api/v1/customers
     payment-url: http://localhost:8222/api/v1/payments
     product-url: http://localhost:8222/api/v1/products
+server:
+  port: 8070

@@ -13,13 +13,13 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.andd.ecommerce.email.EmailTemplates.ORDER_CONFIRMATION;
 import static com.andd.ecommerce.email.EmailTemplates.PAYMENT_CONFIRMATION;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +37,7 @@ public class EmailService {
             String orderReference
     ) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper messageHelper =
-                new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, UTF_8.name());
 
         messageHelper.setFrom("contact@daoducan.io.vn");
         final String templateName = PAYMENT_CONFIRMATION.getTemplate();
@@ -57,9 +56,9 @@ public class EmailService {
             messageHelper.setText(htmlTemplate, true);
             messageHelper.setTo(destinationEmail);
             mailSender.send(mimeMessage);
-            log.info(String.format("Info - Email successfully set to %s with template %s,", destinationEmail, templateName));
+            log.info(String.format("INFO - Email successfully sent to %s with template %s ", destinationEmail, templateName));
         } catch (MessagingException e) {
-            log.warn("WARNING - Cannot send email to {}", destinationEmail);
+            log.warn("WARNING - Cannot send Email to {}", destinationEmail);
         }
     }
 
@@ -72,15 +71,14 @@ public class EmailService {
             List<Product> products
     ) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper messageHelper =
-                new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, UTF_8.name());
 
         messageHelper.setFrom("contact@daoducan.io.vn");
         final String templateName = ORDER_CONFIRMATION.getTemplate();
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("customerName", customerName);
-        variables.put("amount", amount);
+        variables.put("totalAmount", amount);
         variables.put("orderReference", orderReference);
         variables.put("products", products);
 
@@ -93,9 +91,9 @@ public class EmailService {
             messageHelper.setText(htmlTemplate, true);
             messageHelper.setTo(destinationEmail);
             mailSender.send(mimeMessage);
-            log.info(String.format("Info - Email successfully set to %s with template %s,", destinationEmail, templateName));
+            log.info(String.format("INFO - Email successfully sent to %s with template %s ", destinationEmail, templateName));
         } catch (MessagingException e) {
-            log.warn("WARNING - Cannot send email to {}", destinationEmail);
+            log.warn("WARNING - Cannot send Email to {}", destinationEmail);
         }
     }
 }

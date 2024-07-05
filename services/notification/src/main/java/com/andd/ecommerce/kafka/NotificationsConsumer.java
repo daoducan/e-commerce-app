@@ -5,7 +5,6 @@ import com.andd.ecommerce.kafka.order.OrderConfirmation;
 import com.andd.ecommerce.kafka.payment.PaymentConfirmation;
 import com.andd.ecommerce.notification.Notification;
 import com.andd.ecommerce.notification.NotificationRepository;
-import com.andd.ecommerce.notification.NotificationType;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,20 +13,23 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+import static com.andd.ecommerce.notification.NotificationType.*;
+import static java.lang.String.format;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class NotificationConsumer {
+public class NotificationsConsumer {
 
     private final NotificationRepository repository;
     private final EmailService emailService;
 
     @KafkaListener(topics = "payment-topic")
-    public void consumePaymentSuccessNotification(PaymentConfirmation paymentConfirmation) throws MessagingException {
-        log.info(String.format("Consuming the message from payment-topic Topic:: %s", paymentConfirmation));
+    public void consumePaymentSuccessNotifications(PaymentConfirmation paymentConfirmation) throws MessagingException {
+        log.info(format("Consuming the message from payment-topic Topic:: %s", paymentConfirmation));
         repository.save(
                 Notification.builder()
-                        .type(NotificationType.PAYMENT_CONFIRMATION)
+                        .type(PAYMENT_CONFIRMATION)
                         .notificationDate(LocalDateTime.now())
                         .paymentConfirmation(paymentConfirmation)
                         .build()
@@ -44,11 +46,11 @@ public class NotificationConsumer {
     }
 
     @KafkaListener(topics = "order-topic")
-    public void consumeOrderConfirmationNotification(OrderConfirmation orderConfirmation) throws MessagingException {
-        log.info(String.format("Consuming the message from order-topic Topic:: %s", orderConfirmation));
+    public void consumeOrderConfirmationNotifications(OrderConfirmation orderConfirmation) throws MessagingException {
+        log.info(format("Consuming the message from order-topic Topic:: %s", orderConfirmation));
         repository.save(
                 Notification.builder()
-                        .type(NotificationType.ORDER_CONFIRMATION)
+                        .type(ORDER_CONFIRMATION)
                         .notificationDate(LocalDateTime.now())
                         .orderConfirmation(orderConfirmation)
                         .build()

@@ -1,9 +1,9 @@
 spring:
   datasource:
+    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/payment
     username: andd
-    password: pgAnDD#1102
-    driver-class-name: org.postgresql.Driver
+    password: pgAnDD1102
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,6 +16,5 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.type.mapping: paymentConfirmation:com.andd.ecommerce.notification.PaymentNotificationRequest
-
 server:
   port: 8060

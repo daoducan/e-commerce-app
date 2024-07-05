@@ -8,6 +8,8 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
+import static org.springframework.kafka.support.KafkaHeaders.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -19,7 +21,7 @@ public class OrderProducer {
         log.info("Sending order confirmation");
         Message<OrderConfirmation> message = MessageBuilder
                 .withPayload(orderConfirmation)
-                .setHeader(KafkaHeaders.TOPIC, "order-topic")
+                .setHeader(TOPIC, "order-topic")
                 .build();
         kafkaTemplate.send(message);
     }

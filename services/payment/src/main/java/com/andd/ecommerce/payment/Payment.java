@@ -25,7 +25,6 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
     private Integer orderId;
-    private String customerId;
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
