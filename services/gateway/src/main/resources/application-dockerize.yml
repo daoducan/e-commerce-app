@@ -1,0 +1,10 @@
+spring:
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: "http://keycloak:9098/realms/micro-services"
+  config:
+    import: optional:configserver:http://config-server:8888
+  application:
+    name: gateway-service

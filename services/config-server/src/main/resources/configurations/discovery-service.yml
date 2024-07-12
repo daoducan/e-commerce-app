@@ -1,5 +1,5 @@
 eureka:
   instance:
-    hostname: localhost
+    hostname: discovery-service
 server:
   port: 8761

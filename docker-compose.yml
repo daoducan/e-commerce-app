@@ -76,7 +76,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://ms_kafka:9092
     networks:
     - microservices-net
 
@@ -136,7 +136,6 @@ services:
     depends_on:
       - zipkin
       - config-server
-
   ## Customer Service
   customer-service:
     container_name: customer-service
@@ -244,7 +243,6 @@ services:
       - config-server
       - discovery-service
       - postgres
-
 networks:
   microservices-net:
     driver: bridge
