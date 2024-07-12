@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: ms_pg_sql
+    container_name: ms_postgres_sql
     image: postgres
     environment:
       POSTGRES_USER: andd
@@ -107,35 +107,144 @@ services:
       - microservices-net
     command:
       - "start-dev"
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    restart: unless-stopped
+
+  ## Config Server
+  config-server:
+    container_name: config-server
+    build:
+      context: ./services/config-server
+      dockerfile: Dockerfile
+    image: config-server:latest
     ports:
-    - 9090:9090
-    volumes:
-    - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - "8888:8888"
+    networks:
+      - microservices-net
     depends_on:
-      - product_service
-      - payment_service
-      - order_service
-      - notification_service
-      - gateway_service
-      - discovery_service
-      - customer_service
-  grafana:
-    image: grafana/grafana:11.1.0
-    container_name: grafana
-    restart: unless-stopped
+      - zipkin
+
+  ## Discovery Service
+  discovery-service:
+    container_name: discovery-service
+    build:
+      context: ./services/discovery
+      dockerfile: Dockerfile
+    image: discovery-service:latest
     ports:
-    - 3000:3000
-    links:
-      - prometheus:prometheus
-    volumes:
-    - ./grafana:/var/lib/grafana
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=password
+      - "8761:8761"
+    networks:
+      - microservices-net
+    depends_on:
+      - zipkin
+      - config-server
+
+  ## Customer Service
+  customer-service:
+    container_name: customer-service
+    build:
+      context: ./services/customer
+      dockerfile: Dockerfile
+    image: customer-service:latest
+    ports:
+      - "8090:8090"
+    networks:
+      - microservices-net
+    depends_on:
+      - zipkin
+      - config-server
+      - discovery-service
+      - mongodb
+
+  ## Gateway Service
+  gateway-service:
+    container_name: gateway-service
+    build:
+      context: ./services/gateway
+      dockerfile: Dockerfile
+    image: gateway-service:latest
+    ports:
+      - "8222:8222"
+    networks:
+      - microservices-net
+    depends_on:
+      - zipkin
+      - config-server
+      - discovery-service
+
+  ## Notification Service
+  notification-service:
+    container_name: notification-service
+    build:
+      context: ./services/notification
+      dockerfile: Dockerfile
+    image: notification-service:latest
+    ports:
+      - "8040:8040"
+    networks:
+      - microservices-net
+    depends_on:
+      - zipkin
+      - config-server
+      - discovery-service
+      - mail-dev
+      - kafka
+      - mongodb
+
+  ## Order Service
+  order-service:
+    container_name: order-service
+    build:
+      context: ./services/order
+      dockerfile: Dockerfile
+    image: order-service:latest
+    ports:
+      - "8070:8070"
+    networks:
+      - microservices-net
+    depends_on:
+      - zipkin
+      - config-server
+      - discovery-service
+      - postgres
+      - kafka
+      - customer-service
+      - payment-service
+      - product-service
+
+  ## payment Service
+  payment-service:
+    container_name: payment-service
+    build:
+      context: ./services/payment
+      dockerfile: Dockerfile
+    image: payment-service:latest
+    ports:
+      - "8060:8060"
+    networks:
+      - microservices-net
+    depends_on:
+      - zipkin
+      - config-server
+      - discovery-service
+      - postgres
+      - kafka
+
+  ## product Service
+  product-service:
+    container_name: product-service
+    build:
+      context: ./services/product
+      dockerfile: Dockerfile
+    image: product-service:latest
+    ports:
+      - "8050:8050"
+    networks:
+      - microservices-net
+    depends_on:
+      - zipkin
+      - config-server
+      - discovery-service
+      - postgres
+
 networks:
   microservices-net:
     driver: bridge
